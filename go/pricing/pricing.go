@@ -1,6 +1,10 @@
 // Package pricing holds the LabShop pricing rules. All amounts are in toman.
 package pricing
 
+import (
+	"strings"
+)
+
 const (
 	BulkMinQty       = 10
 	BulkPercent      = 10
@@ -42,6 +46,8 @@ var coupons = map[string]*Coupon{
 }
 
 func FindCoupon(code string) *Coupon {
+	code = strings.TrimSpace(strings.ToUpper(code))
+	//fmt.Println(code)
 	return coupons[code]
 }
 
@@ -50,11 +56,16 @@ func PriceOrder(o Order) Bill {
 	for _, it := range o.Items {
 		subtotal += it.UnitPrice * it.Qty
 	}
+	//fmt.Println(1)
 	bulk := bulkDiscount(o.Items)
+	//fmt.Println(2,bulk)
 	coupon := couponDiscount(o, subtotal-bulk)
+	//fmt.Println(3)
 	taxable := subtotal - bulk - coupon
 	tax := TaxFor(taxable)
+	//fmt.Println(4)
 	shipping := ShippingFor(taxable)
+	//fmt.Println(5)
 	return Bill{subtotal, bulk + coupon, tax, shipping, taxable + tax + shipping}
 }
 
@@ -73,10 +84,16 @@ func couponDiscount(o Order, amount int64) int64 {
 	if o.CouponCode == "" {
 		return 0
 	}
+	//fmt.Println("11")
 	c := FindCoupon(o.CouponCode)
+	//fmt.Println("22",c)
+	if(c == nil) {
+		return 0
+	}
 	if c.Kind == "fixed" {
 		return min(c.Value, amount)
 	}
+	//fmt.Println("33")
 	return applyPercent(o.Items, c.Value)
 }
 

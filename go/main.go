@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"reflect"
 
 	"labshop/pricing"
 )
@@ -29,6 +30,8 @@ func main() {
 	fmt.Println(header)
 	invalid := 0
 	for _, o := range orders {
+		//fmt.Println(reflect.TypeOf(o))
+		//fmt.Println("%+d",o)
 		b := pricing.PriceOrder(o)
 		fmt.Printf("%5d  %-10s %10d %9d %9d %9d %11d\n",
 			o.ID, o.Customer, b.Subtotal, b.Discount, b.Tax, b.Shipping, b.Total)
