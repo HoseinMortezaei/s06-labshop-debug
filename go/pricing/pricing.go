@@ -116,7 +116,7 @@ func applyPercent(items []Item, percent int64) int64 {
 
 // TaxFor returns the VAT, rounded to the nearest toman.
 func TaxFor(amount int64) int64 {
-	return amount * TaxPercent / 100
+	return (amount*TaxPercent + 50) / 100
 }
 
 func ShippingFor(amount int64) int64 {
